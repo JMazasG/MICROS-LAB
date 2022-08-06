@@ -1,0 +1,11 @@
+#include <18F4550.h>		//incluir el dispositivo 
+#fuses HSPLL,PLL5,CPUDIV2,NOWDT,NOPROTECT
+#use delay (crystal = 48M, clock = 20M)
+
+void main ()
+{
+	while(true)
+	{
+			
+	}
+}
