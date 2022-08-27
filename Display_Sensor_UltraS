@@ -1,0 +1,69 @@
+#include <18F4550.h>
+#fuses NOPROTECT NOWDT XTPLL PLL1 CPUDIV1
+#use delay (crystal = 4Mhz)
+
+#BYTE PORTA = 0xF80
+#BYTE PORTB = 0xF81
+#BYTE PORTD = 0xF83
+#BYTE TRISA = 0xF92
+#BYTE TRISB = 0xF93
+#BYTE TRISD = 0xF95
+
+void Dis4Seg ();
+void Descomponer ();
+int Disp [4] = {0, 0, 0, 0};
+int Dist = 0;
+int uni, dec, cent;
+
+void main ()
+{
+   TRISA = 0x00;
+   TRISB = 0x00;
+   TRISD = 0x00;
+   
+   while (True)
+   {
+      for (int i = 0; i <= 100; i++)
+      {
+         Dist = i;
+         Descomponer ();
+         Disp [0] = uni;
+         Disp [1] = dec;
+         Disp [2] = cent;
+         for (int j = 0; j <= 100; j++)
+            Dis4Seg ();
+      }
+   }
+}
+
+//_____________________________________________________________________________
+void Descomponer ()
+{
+   int temp;                  //Variable temporal
+   
+   uni = Dist % 10;            //Unidades
+   
+   temp = Dist - uni;           //Decenas
+   temp = temp % 100;
+   dec = temp / 10;
+   
+   temp = Dist - dec*10 - uni;  //Centenas  
+   cent = temp / 100;
+}  
+
+
+//_____________________________________________________________________________
+void Dis4Seg ()
+{
+   int Act[4] = {0x01,0x02,0x04,0x08};
+   int Digito[10] = {0x7E,0x30,0x6D,0x79,0x33,0x5B,0x5F,0x70,0x7F,0x7B};
+   int i;
+   
+   for(i = 0; i < 4; i++)
+   {
+      PORTA = Act[i];          
+      PORTD = Digito[Disp [i]];    
+      delay_ms(1);             
+      PORTD = 0x00;            
+   }
+}
